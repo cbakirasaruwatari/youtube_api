@@ -1,0 +1,3 @@
+*.env
+ctr/persistent_db/resource/container/data/
+src/youtubeapi/__pycache__

@@ -1,0 +1,32 @@
+version: '3'
+services:
+  youtube-api:
+    hostname: youtube-api
+    image: youtube-api
+    container_name: youtube-api
+    build:
+      context: ../ctr/youtubeapi
+      dockerfile: youtubeapi.Dockerfile
+    env_file:
+      - ../ctr/youtubeapi/resource/container/.env
+    volumes:
+      - ../src/youtubeapi:/home
+    user: root
+    tty: True
+  youtube-persistent-db:
+    hostname: youtube-persistent-db
+    image: youtube-persistent-db
+    container_name: youtube-persistent-db
+    build:
+      context: ../ctr/persistent_db
+      dockerfile: db_mysql.Dockerfile
+    env_file:
+      - ../ctr/persistent_db/resource/container/.env
+    volumes:
+      - ../ctr/persistent_db/resource/container/initdb.d:/docker-entrypoint-initdb.d
+      - ../ctr/persistent_db/resource/container/data:/var/lib/mysql 
+    ports:
+      - "31111:3306"
+    user: root
+    tty: True
+    # restart: unless-stopped

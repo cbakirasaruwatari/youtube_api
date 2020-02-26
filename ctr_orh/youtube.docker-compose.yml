@@ -24,9 +24,9 @@ services:
       - ../ctr/persistent_db/resource/container/.env
     volumes:
       - ../ctr/persistent_db/resource/container/initdb.d:/docker-entrypoint-initdb.d
-      - ../ctr/persistent_db/resource/container/data:/var/lib/mysql 
+      - ../ctr/persistent_db/resource/container/data:/var/lib/mysql
     ports:
       - "31111:3306"
     user: root
     tty: True
-    # restart: unless-stopped
+    restart: unless-stopped

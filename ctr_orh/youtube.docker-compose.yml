@@ -22,6 +22,8 @@ services:
       dockerfile: db_mysql.Dockerfile
     env_file:
       - ../ctr/persistent_db/resource/container/.env
+    environment: 
+      - TZ=Asia/Tokyo
     volumes:
       - ../ctr/persistent_db/resource/container/initdb.d:/docker-entrypoint-initdb.d
       - ../ctr/persistent_db/resource/container/data:/var/lib/mysql

@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   youtube-api:
     hostname: youtube-api
@@ -13,6 +13,8 @@ services:
       - ../src/youtubeapi:/home
     user: root
     tty: True
+    networks:
+      - default
   youtube-persistent-db:
     hostname: youtube-persistent-db
     image: youtube-persistent-db
@@ -32,3 +34,11 @@ services:
     user: root
     tty: True
     restart: unless-stopped
+    networks:
+      - default
+      - lake
+networks:
+  lake:
+    external: True
+  default:
+    name: youtube

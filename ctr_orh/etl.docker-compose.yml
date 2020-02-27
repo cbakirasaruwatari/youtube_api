@@ -1,0 +1,47 @@
+version: '3.5'
+services:
+  master:
+    hostname: spark-master
+    image: spark
+    container_name: spark-master
+    build:
+      context: ../ctr/etl
+      dockerfile: spark-python.Dockerfile
+    env_file:
+       - ../ctr/etl/resource/container/.env
+    user: root
+    tty: True
+    volumes:
+      - ../src/etl:/home
+    # ports:
+    #   - 4040:4040
+    #   - 8080:8080
+    # command: /spark/bin/spark-class org.apache.spark.deploy.master.Master --host 0.0.0.0
+    networks:
+      - default
+
+  worker:
+    hostname: spark-worker
+    image: spark
+    container_name: spark-worker
+    build:
+      context: ../ctr/etl
+      dockerfile: spark-python.Dockerfile
+    env_file:
+      - ../ctr/etl/resource/container/.env
+    user: root
+    tty: True
+    volumes:
+      - ../src/etl:/home
+    # ports:
+    #   - 8081-8089:8081
+    # command: /spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://master:7077 --host 0.0.0.0
+    networks:
+      - default
+      - lake
+
+networks:
+  lake:
+    external: True
+  default:
+    name: etl

@@ -10,7 +10,6 @@ services:
     env_file:
        - ../ctr/etl/resource/container/.env
     user: root
-    tty: True
     volumes:
       - ../src/etl:/home
     # ports:
@@ -30,7 +29,6 @@ services:
     env_file:
       - ../ctr/etl/resource/container/.env
     user: root
-    tty: True
     volumes:
       - ../src/etl:/home
     # ports:

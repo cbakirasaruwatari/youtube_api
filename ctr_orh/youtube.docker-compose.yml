@@ -12,7 +12,6 @@ services:
     volumes:
       - ../src/youtubeapi:/home
     user: root
-    tty: True
     working_dir: /home
     networks:
       - default

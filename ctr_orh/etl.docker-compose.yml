@@ -29,6 +29,7 @@ services:
     env_file:
       - ../ctr/etl/resource/container/.env
     user: root
+    working_dir: /home
     volumes:
       - ../src/etl:/home
     # ports:

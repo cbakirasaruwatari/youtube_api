@@ -70,6 +70,8 @@ class APIYoutube(APIMeta):
          self.db.close()
 
 if __name__ == "__main__":
-   
+   print("start getting channels")
    channel = APIYoutube("channels",destination="db")
    channel.start("file")
+   print("finish getting channels")
+   

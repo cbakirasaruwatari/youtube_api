@@ -81,12 +81,33 @@ if __name__ == "__main__":
         db.close()
 
     # transform
-    df = pd.json_normalize(data)[column_neames.keys()].rename(columns=column_neames)
-    file_path = "youtuber_list_" + datetime.now().strftime('%Y-%m-%d-%H%M%S')  + ".csv"
+    if len(data) ==0:
+        raise Exception("データが取れてないよ")
+    df = pd.json_normalize(data)
+    filtered_column_neames =  {column_name:rename for column_name,rename in column_neames.items() if column_name in list(df.columns)}
+    df = df[filtered_column_neames.keys()].rename(columns=filtered_column_neames)
+    file_path = "channels" + datetime.now().strftime('%Y-%m-%d-%H%M%S')  + ".csv"
     df.to_csv(file_path)
-
+    
     # load
-    s3 = boto3.resource('s3').Bucket('youtube-channel-data').objects.filter()
-    for a in s3:
-        print(a)
-    # .upload_file(file_path,file_path)
+    from boto3.session import Session
+    cfg = configparser.SafeConfigParser(os.environ)
+    cfg.read('./resource/settings/aws.cfg')
+    arn=cfg["credential"]["arn"]
+
+    client = boto3.client('sts')    
+    response =  client.assume_role(
+                RoleArn=arn,
+                RoleSessionName="temp"
+            )
+
+    session = Session(aws_access_key_id=response['Credentials']['AccessKeyId'],
+                    aws_secret_access_key=response['Credentials']['SecretAccessKey'],
+                    aws_session_token=response['Credentials']['SessionToken'],
+                    region_name='ap-northeast-1')
+    
+    session.resource('s3').Bucket('youtube-channel-data').upload_file(file_path,"targetChannelsDumpCSV/" + file_path)
+
+    # del transffered file.
+    os.remove(file_path)
+

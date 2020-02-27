@@ -13,8 +13,10 @@ services:
       - ../src/youtubeapi:/home
     user: root
     tty: True
+    working_dir: /home
     networks:
       - default
+
   youtube-persistent-db:
     hostname: youtube-persistent-db
     image: youtube-persistent-db

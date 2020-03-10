@@ -5,31 +5,31 @@ services:
     image: youtube-api
     container_name: youtube-api
     build:
-      context: ../ctr/youtubeapi
-      dockerfile: youtubeapi.Dockerfile
+      context: ../ctr/google_api
+      dockerfile: google_api_python.Dockerfile
     env_file:
-      - ../ctr/youtubeapi/resource/container/.env
+      - ../ctr/google_api/resource/container/.env
     volumes:
-      - ../src/youtubeapi:/home
+      - ../src/google_api:/home
     user: root
     working_dir: /home
     networks:
       - default
 
-  youtube-persistent-db:
-    hostname: youtube-persistent-db
-    image: youtube-persistent-db
-    container_name: youtube-persistent-db
+  google-persistent-db:
+    hostname: google-persistent-db
+    image: google-persistent-db
+    container_name: google-persistent-db
     build:
       context: ../ctr/persistent_db
       dockerfile: db_mysql.Dockerfile
     env_file:
-      - ../ctr/persistent_db/resource/container/.env
+      - ../ctr/persistent_db/resource/google_api/container/.env
     environment: 
       - TZ=Asia/Tokyo
     volumes:
-      - ../ctr/persistent_db/resource/container/initdb.d:/docker-entrypoint-initdb.d
-      - ../ctr/persistent_db/resource/container/data:/var/lib/mysql
+      - ../ctr/persistent_db/resource/google_api/container/initdb.d:/docker-entrypoint-initdb.d
+      - ../ctr/persistent_db/resource/google_api/container/data:/var/lib/mysql
     ports:
       - "31111:3306"
     user: root

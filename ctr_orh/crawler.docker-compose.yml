@@ -1,0 +1,46 @@
+version: '3.5'
+services:
+  crawler-0:
+    hostname: crawler-0
+    image: crawler-0
+    container_name: crawler-0
+    build:
+      context: ../ctr/crawler
+      dockerfile: scrapy.Dockerfile
+    env_file:
+      - ../ctr/crawler/resource/container/.env
+    volumes:
+      - ../src/crawler:/home
+    user: root
+    working_dir: /home
+    networks:
+      - default
+    tty: True
+    
+  crawler-persistent-db:
+    hostname: crawler-persistent-db
+    image: crawler-persistent-db
+    container_name: crawler-persistent-db
+    build:
+      context: ../ctr/persistent_db
+      dockerfile: db_mysql.Dockerfile
+    env_file:
+      - ../ctr/persistent_db/resource/crawler/container/.env
+    environment: 
+      - TZ=Asia/Tokyo
+    volumes:
+      - ../ctr/persistent_db/resource/crawler/container/initdb.d:/docker-entrypoint-initdb.d
+      - ../ctr/persistent_db/resource/crawler/container/data:/var/lib/mysql
+    ports:
+      - "31112:3306"
+    user: root
+    tty: True
+    restart: unless-stopped
+    networks:
+      - default
+      - lake
+networks:
+  lake:
+    external: True
+  default:
+    name: cralwer

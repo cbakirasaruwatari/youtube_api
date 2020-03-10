@@ -19,10 +19,7 @@ class APIYoutube(APIMeta):
       self.method = method
       self.destination = destination
 
-   def start(
-               self,
-               resource:str="file",
-            ) -> None:
+   def start(self,resource:str="file") -> None:
       targets = self.__fetch_target(self.method,resource)
       for target in targets:
          result = self.__run(id = target,part="id,snippet,brandingSettings,contentDetails,invideoPromotion,statistics,topicDetails")

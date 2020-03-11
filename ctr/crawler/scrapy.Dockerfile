@@ -22,6 +22,8 @@ RUN apk add --update --no-cache \
 
 # additional package for pip
 RUN pip install \
-    'Scrapy==2.0.0' 
+    'Scrapy==2.0.0' \
+    'SQLAlchemy==1.3.13' \
+    'PyMySQL==0.9.3'
 
 RUN apk del .build-deps

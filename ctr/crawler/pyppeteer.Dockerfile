@@ -9,4 +9,6 @@ RUN apk --update add tzdata && \
 USER root
 
 RUN pip install \
-    'pyppeteer==0.0.25' 
+    'pyppeteer==0.0.25' \
+    'SQLAlchemy==1.3.13' \
+    'PyMySQL==0.9.3'

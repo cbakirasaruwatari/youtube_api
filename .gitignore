@@ -1,3 +1,4 @@
 *.env
 ctr/persistent_db/resource/*
 src/youtubeapi/__pycache__
+src/crawler

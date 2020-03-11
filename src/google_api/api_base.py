@@ -55,15 +55,15 @@ class APIMeta(metaclass = ABCMeta):
    @dataclass(frozen=True) 
    class Destination:
       db:str="mysql"
-      file:str=None
+      file:str="json"
 
-   def __init__(self,service_name: str,destination: str):
+   def __init__(self,service_name: str,destination: str,resource: str = "file"):
       self.accssr = EndpointAccessor(service_name)
 
       for ent,arg in zip(["Destination"],[destination]):
          if hasattr(getattr(self,ent),arg) == False:
             raise AttributeError(ent + " is Wrong")
-      if destination == "db":
+      if destination == "db" or resource == "db":
          self.db = Pdbc(service_name)
       
    @abstractmethod

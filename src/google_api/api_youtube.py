@@ -8,19 +8,21 @@ import json
 # import csv
 
 from api_base import APIMeta
-from db import PersitenceDatabaseConnector as Pdbc
 
 class APIYoutube(APIMeta):
 
-   def __init__(self,method,*,destination):
+   def __init__(self,method,*,destination,resource):
       if destination is None:
          raise ValueError(" must input destionation arg")
-      super(APIYoutube, self).__init__("youtube", destination)
+      elif resource is None:
+         raise ValueError(" must input resource arg")
+      super(APIYoutube, self).__init__("youtube", destination,resource)
       self.method = method
       self.destination = destination
+      self.resource = resource
 
-   def start(self,resource:str="file") -> None:
-      targets = self.__fetch_target(self.method,resource)
+   def start(self) -> None:
+      targets = self.__fetch_target(self.method,self.resource)
       for target in targets:
          result = self.__run(id = target,part="id,snippet,brandingSettings,contentDetails,invideoPromotion,statistics,topicDetails")
          self.__save(self.destination,self.method,json.dumps(result))
@@ -31,28 +33,39 @@ class APIYoutube(APIMeta):
       return result
    
    def __fetch_target(self,method_name: str,resource: str=None) -> list:
-      targets = []
       if resource == "file":
-         target_dir = "./resource/youtube/" + method_name + "/"
-         target_files = [f for f in os.listdir(target_dir) if os.path.isfile(os.path.join(target_dir, f))]
-         if len(target_files) > 1:
-            raise NotImplementedError("not support mutiple files")
-         elif len(target_files) <= 0:
-            raise FileNotFoundError("must has a target file")
-         for file in target_files:
-            with open(target_dir + file) as r:
-               targets.extend([url[url.rfind("/")+1:] for url in json.load(r)])
+         return self.__fetch_target_from_file(method_name)
+      elif resource == "db":
+         return self.__fetch_target_from_db(method_name + "_resource")
       else: 
          raise NotImplementedError
 
+   def __fetch_target_from_file(self,dir_name:str) -> list:
+      targets = []
+      target_dir = "./resource/youtube/" + dir_name + "/"
+      target_files = [f for f in os.listdir(target_dir) if os.path.isfile(os.path.join(target_dir, f))]
+      if len(target_files) > 1:
+         raise NotImplementedError("not support mutiple files")
+      elif len(target_files) <= 0:
+         raise FileNotFoundError("must has a target file")
+      for file in target_files:
+         with open(target_dir + file) as r:
+            targets.extend([url[url.rfind("/")+1:] for url in json.load(r)])
+      
       return targets
-   
+
+   def __fetch_target_from_db(self,tbl_name:str) -> list:
+      self.db.connect()
+      self.db.cursor.execute('select url from ' +  tbl_name)
+      targets = [ url[0][url[0].rfind("/")+1:] for url in self.db.cursor.fetchall()]
+
+      return targets
+
    def __save(self,destination: str,name: str,body: json) -> None:
       if destination == "db":
          self.__save_to_mysql(name,body)
       else: 
          raise NotImplementedError
-
 
    def __save_to_mysql(self,tbl_name: str, body: json) -> None:
       try:
@@ -68,7 +81,25 @@ class APIYoutube(APIMeta):
 
 if __name__ == "__main__":
    print("start getting channels")
-   channel = APIYoutube("channels",destination="db")
-   channel.start("file")
+   channel = APIYoutube("channels",destination="db",resource="db")
+   channel.start()
    print("finish getting channels")
+
+
+
+
+   # channel = APIYoutube("channels",destination="db",resource="db")
+   # target_dir = "./resource/youtube/" + "channels" + "/"
+   # target_files = [f for f in os.listdir(target_dir) if os.path.isfile(os.path.join(target_dir, f))]
+   # targets = []
+   # with open(target_dir + target_files[0]) as r:
+   #       targets.extend([url[url.rfind("/")+1:] for url in json.load(r)])
+   # for temp in  targets:
+   #    channel.db.connect()
+   #    channel.db.cursor.execute("INSERT INTO youtube.channels_resource (url, create_date) VALUES(%s, CURRENT_TIMESTAMP)",[temp])
+   #    channel.db.commit()
+
+
+
+
    

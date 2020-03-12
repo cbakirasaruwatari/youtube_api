@@ -1,4 +1,4 @@
 *.env
-ctr/persistent_db/resource/*
+ctr/persistent_db/resource/*/*/data
 src/youtubeapi/__pycache__
 src/crawler

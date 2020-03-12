@@ -12,10 +12,9 @@ services:
     volumes:
       - ../src/crawler:/home
     user: root
-    working_dir: /home
+    working_dir: /home/scrapy/youtuber_list
     networks:
       - default
-    tty: True
     
   crawler-persistent-db:
     hostname: crawler-persistent-db

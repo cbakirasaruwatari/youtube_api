@@ -22,7 +22,8 @@ class PersitenceDatabaseConnector:
   errors = mydb.errors
   def __init__(
                 self,
-                db_name: str
+                resource_name: str,
+                resource_name_sub: str
               ):
 
     if os.path.isfile(self._CFG_PATH) is False:
@@ -30,11 +31,11 @@ class PersitenceDatabaseConnector:
     cfg = configparser.SafeConfigParser(os.environ)
     cfg.read(self._CFG_PATH)
 
-    self.__host=cfg["youtube_db"]["db_host"]
-    self.__port=cfg["youtube_db"]["db_port"]
-    self.__user=cfg["youtube_db_" + db_name]["db_user"]
-    self.__password=cfg["youtube_db_" + db_name]["db_password"]
-    self.__database=cfg["youtube_db_" + db_name]["db_database"]
+    self.__host=cfg[resource_name]["db_host"]
+    self.__port=cfg[resource_name]["db_port"]
+    self.__user=cfg[resource_name + "_" + resource_name_sub]["db_user"]
+    self.__password=cfg[resource_name + "_" + resource_name_sub]["db_password"]
+    self.__database=cfg[resource_name + "_" + resource_name_sub]["db_database"]
 
   def connect(self):
     self.conn = mydb.connect(
@@ -69,10 +70,9 @@ if __name__ == "__main__":
     }
 
     # extract
-    db = PersitenceDatabaseConnector("youtube")
+    db = PersitenceDatabaseConnector("google_api","youtube")
     try:
         db.connect()
-        
         db.cursor.execute('select body from channels where create_date between %s and %s',[datetime.now().replace(hour=0,minute=0,second=0,microsecond=0),datetime.now().replace(hour=23,minute=59,second=59,microsecond=59)])
         data = [json.loads(d[0])["items"][0] for d in db.cursor.fetchall()]
     except db.errors.ProgrammingError as e:

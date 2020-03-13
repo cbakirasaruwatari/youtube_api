@@ -56,7 +56,7 @@ class APIYoutube(APIMeta):
 
    def __fetch_target_from_db(self,tbl_name:str) -> list:
       self.db.connect()
-      self.db.cursor.execute('select url from ' +  tbl_name)
+      self.db.cursor.execute('select url from ' +  tbl_name + " order by create_date asc")
       targets = [ url[0][url[0].rfind("/")+1:] for url in self.db.cursor.fetchall()]
 
       return targets

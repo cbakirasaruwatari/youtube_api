@@ -74,7 +74,7 @@ if __name__ == "__main__":
     try:
         db.connect()
         db.cursor.execute('select body from channels where create_date between %s and %s',[datetime.now().replace(hour=0,minute=0,second=0,microsecond=0),datetime.now().replace(hour=23,minute=59,second=59,microsecond=59)])
-        data = [json.loads(d[0])["items"][0] for d in db.cursor.fetchall()]
+        data = [json.loads(d[0])["items"][0] for d in db.cursor.fetchall() if len(json.loads(d[0])["items"]) != 0]
     except db.errors.ProgrammingError as e:
         print(e)
         sys.exit()
